@@ -7,11 +7,11 @@
     <version>2.3.0</version>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
         <encoding>UTF-8</encoding>
-        <scala.version>2.11.7</scala.version>
-        <finatra.version>2.3.0</finatra.version>
+        <scala.version>2.10.4</scala.version>
+        <finatra.version>2.1.6</finatra.version>
 
         <mainClass>com.twitter.hello.HelloWorldServerMain</mainClass>
         <buildPropertiesPackage>com.twitter.hello</buildPropertiesPackage>
@@ -23,7 +23,7 @@
         <!-- Flink -->
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-scala_2.11</artifactId>
+            <artifactId>flink-scala_2.10</artifactId>
             <version>${flink.version}</version>
         </dependency>
         <dependency>
@@ -41,8 +41,8 @@
 
         <!-- Finatra -->
         <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>finatra-http_2.11</artifactId>
+            <groupId>com.twitter.finatra</groupId>
+            <artifactId>finatra-http_2.10</artifactId>
             <version>${finatra.version}</version>
         </dependency>
 
@@ -61,36 +61,36 @@
             <version>4.0</version>
         </dependency>
         <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>finatra-http_2.11</artifactId>
+            <groupId>com.twitter.finatra</groupId>
+            <artifactId>finatra-http_2.10</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
             <version>${finatra.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>inject-core_2.11</artifactId>
+            <groupId>com.twitter.inject</groupId>
+            <artifactId>inject-core_2.10</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
             <version>${finatra.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>inject-modules_2.11</artifactId>
+            <groupId>com.twitter.inject</groupId>
+            <artifactId>inject-modules_2.10</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
             <version>${finatra.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>inject-app_2.11</artifactId>
+            <groupId>com.twitter.inject</groupId>
+            <artifactId>inject-app_2.10</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
             <version>${finatra.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>inject-server_2.11</artifactId>
+            <groupId>com.twitter.inject</groupId>
+            <artifactId>inject-server_2.10</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
             <version>${finatra.version}</version>
@@ -98,13 +98,13 @@
 
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.11</artifactId>
+            <artifactId>scalatest_2.10</artifactId>
             <scope>test</scope>
             <version>2.2.4</version>
         </dependency>
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
+            <artifactId>specs2_2.10</artifactId>
             <scope>test</scope>
             <version>2.3.12</version>
             <exclusions>
@@ -168,9 +168,9 @@
                             </args>
                             <javacArgs>
                                 <javacArg>-target</javacArg>
-                                <javacArg>8</javacArg>
+                                <javacArg>7</javacArg>
                                 <javacArg>-source</javacArg>
-                                <javacArg>8</javacArg>
+                                <javacArg>7</javacArg>
                             </javacArgs>
                         </configuration>
                         <goals>
@@ -192,9 +192,9 @@
                             </args>
                             <javacArgs>
                                 <javacArg>-target</javacArg>
-                                <javacArg>8</javacArg>
+                                <javacArg>7</javacArg>
                                 <javacArg>-source</javacArg>
-                                <javacArg>8</javacArg>
+                                <javacArg>7</javacArg>
                             </javacArgs>
                         </configuration>
                         <goals>
