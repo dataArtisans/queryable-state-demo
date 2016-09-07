@@ -16,37 +16,66 @@ import scala.concurrent.{Await, duration}
 
 object QueryClient {
   def main(args: Array[String]): Unit = {
+    val queryClient = QueryClient()
+    while (true) {
+      Thread.sleep(1000)
+      val results = queryClient.executeQuery
+      val itor = results.iterator
+      while (itor.hasNext) {
+        println(itor.next)
+      }
+    }
+  }
 
-    val execConfig = new ExecutionConfig
-    val client: QueryableStateClient = new QueryableStateClient(GlobalConfiguration.loadConfiguration("/Users/jgrier/workspace/flink/flink-dist/src/main/resources"))
+  def apply() = {
+    new QueryClient
+  }
+}
 
-    val keySerializer: TypeSerializer[String] = TypeInformation.of(new TypeHint[String]() {}).createSerializer(null)
-    val valueSerializer = TypeInformation.of(new TypeHint[KeyedDataPoint[java.lang.Long]]() {}).createSerializer(execConfig)
+class QueryClient {
+  private val client = getQueryableStateClient()
 
+  def executeQuery: util.List[KeyedDataPoint[lang.Long]] = {
+    val jobId = JobID.fromHexString("d3a00a857cc7e53311883f1729bf5781")
     val key = "apple"
 
+    // Serialize request
+    val seralizedKey = getSeralizedKey("apple")
+
+    // Query Flink state
+    val future = client.getKvState(jobId, "time-series", key.hashCode, seralizedKey)
+
+    // Await async result
+    val serializedResult: Array[Byte] = Await.result(future, new FiniteDuration(10, duration.SECONDS))
+
+    // Deserialize response
+    val results = deserializeResponse(serializedResult)
+
+    results
+  }
+
+  private def deserializeResponse(serializedResult: Array[Byte]): util.List[KeyedDataPoint[java.lang.Long]] = {
+    KvStateRequestSerializer.deserializeList(serializedResult, getValueSerializer())
+  }
+
+  private def getQueryableStateClient(): QueryableStateClient = {
+    val execConfig = new ExecutionConfig
+    val client: QueryableStateClient = new QueryableStateClient(GlobalConfiguration.loadConfiguration("/Users/jgrier/workspace/flink/flink-dist/src/main/resources"))
+    client
+  }
+
+  private def getValueSerializer(): TypeSerializer[KeyedDataPoint[java.lang.Long]] = {
+    TypeInformation.of(new TypeHint[KeyedDataPoint[lang.Long]]() {}).createSerializer(new ExecutionConfig)
+  }
+
+  private def getSeralizedKey(key: String): Array[Byte] = {
+    val keySerializer: TypeSerializer[String] = TypeInformation.of(new TypeHint[String]() {}).createSerializer(null)
     val serializedKey: Array[Byte] =
       KvStateRequestSerializer.serializeKeyAndNamespace(
         key,
         keySerializer,
         VoidNamespace.INSTANCE,
         VoidNamespaceSerializer.INSTANCE)
-
-    val jobId = JobID.fromHexString("d3a00a857cc7e53311883f1729bf5781")
-
-    while(true) {
-      Thread.sleep(1000)
-      println("-------------------------------------------")
-      val future = client.getKvState(jobId, "time-series", key.hashCode, serializedKey)
-
-      // Query for state
-      val serializedResult: Array[Byte] = Await.result(future, new FiniteDuration(100, duration.SECONDS))
-      val listResult: util.List[KeyedDataPoint[lang.Long]] = KvStateRequestSerializer.deserializeList(serializedResult, valueSerializer)
-
-      val itor = listResult.iterator
-      while (itor.hasNext) {
-        println(itor.next)
-      }
-    }
+    serializedKey
   }
 }
