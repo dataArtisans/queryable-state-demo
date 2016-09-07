@@ -1,23 +1,16 @@
 package com.twitter.hello
 
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 import com.twitter.finagle.http.Request
 import com.twitter.finatra.http.Controller
 import org.joda.time.DateTime
 
-import scala.util.Random
+import scala.collection.JavaConverters._
 import scala.util.matching.Regex
 
-class HelloWorldController extends Controller {
-
-  get("/") { request: Request =>
-
-  }
-
-  get("/hi") { request: Request =>
-    "Hello " + request.params.getOrElse("name", "unnamed")
-  }
+class HelloWorldController @Inject()(queryClient: QueryClient) extends Controller {
 
   post("/search") { request: Request =>
     response.ok(
@@ -26,34 +19,34 @@ class HelloWorldController extends Controller {
 
   post("/query") { query: Query =>
 
-    def parseToMillis(interval: String): Long = {
-      val unitMap = Map("ms" -> "MILLISECONDS", "s" -> "SECONDS")
-      val intervalPattern = new Regex("""(\d*)(.*)""")
-      val intervalPattern(period, unit) = interval
-      val timeUnit = TimeUnit.valueOf(unitMap(unit))
-      timeUnit.toMillis(period.toLong)
-    }
-
-    def generateNormallyDistributedDatapoints(startTime: Long, numPoints: Long, interval: Long): Array[Array[Long]] = {
-      (for (i <- 0L to numPoints) yield Array(Math.round(Random.nextGaussian() * 100), startTime + i * interval)).toArray
-    }
-
     val startTimeMs = new DateTime(query.range.from).getMillis
     val intervalMs = parseToMillis(query.interval)
 
     response.ok(
       query.targets.toArray.map {
-        target => {
+        queryTarget => {
           QueryResponse(
-            target = query.targets(0).target,
-            datapoints = generateNormallyDistributedDatapoints(startTimeMs, query.maxDataPoints.toLong, intervalMs)
+            target = queryTarget.target,
+            datapoints = queryFlink(queryTarget.target, startTimeMs, query.maxDataPoints.toLong, intervalMs)
           )
         }
       }
     )
   }
 
-  post("/hi") { hiRequest: HiRequest =>
-    "Hello " + hiRequest.name + " with id " + hiRequest.id
+  def queryFlink(key: String, startTime: Long, numPoints: Long, interval: Long): Array[Array[Long]] = {
+    val results = queryClient.executeQuery(key).asScala.toArray
+    results.map { dataPoint =>
+      Array(dataPoint.getValue.toLong, dataPoint.getTimeStampMs)
+    }
   }
+
+  def parseToMillis(interval: String): Long = {
+    val unitMap = Map("ms" -> "MILLISECONDS", "s" -> "SECONDS")
+    val intervalPattern = new Regex("""(\d*)(.*)""")
+    val intervalPattern(period, unit) = interval
+    val timeUnit = TimeUnit.valueOf(unitMap(unit))
+    timeUnit.toMillis(period.toLong)
+  }
+
 }

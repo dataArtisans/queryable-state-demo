@@ -19,7 +19,7 @@ object QueryClient {
     val queryClient = QueryClient()
     while (true) {
       Thread.sleep(1000)
-      val results = queryClient.executeQuery
+      val results = queryClient.executeQuery("apple")
       val itor = results.iterator
       while (itor.hasNext) {
         println(itor.next)
@@ -34,13 +34,13 @@ object QueryClient {
 
 class QueryClient {
   private val client = getQueryableStateClient()
+  private val JobId: String = "fb33030a773aec645df37b0afc28eb58"
 
-  def executeQuery: util.List[KeyedDataPoint[lang.Long]] = {
-    val jobId = JobID.fromHexString("d3a00a857cc7e53311883f1729bf5781")
-    val key = "apple"
+  def executeQuery(key: String): util.List[KeyedDataPoint[lang.Long]] = {
+    val jobId = JobID.fromHexString(JobId)
 
     // Serialize request
-    val seralizedKey = getSeralizedKey("apple")
+    val seralizedKey = getSeralizedKey(key)
 
     // Query Flink state
     val future = client.getKvState(jobId, "time-series", key.hashCode, seralizedKey)
