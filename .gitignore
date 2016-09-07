@@ -1,2 +1,4 @@
 .idea
 *.iml
+access.log
+service.log
