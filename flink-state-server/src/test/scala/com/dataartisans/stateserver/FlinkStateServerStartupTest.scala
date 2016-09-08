@@ -1,13 +1,14 @@
-package com.twitter.hello
+package com.dataartisans.stateserver
 
+import com.dataartisans.stateserver.server.FlinkStateServer
 import com.google.inject.Stage
 import com.twitter.finatra.http.test.EmbeddedHttpServer
 import com.twitter.inject.server.FeatureTest
 
-class HelloWorldStartupTest extends FeatureTest {
+class FlinkStateServerStartupTest extends FeatureTest {
 
   override val server = new EmbeddedHttpServer(
-    twitterServer = new HelloWorldServer,
+    twitterServer = new FlinkStateServer,
     stage = Stage.PRODUCTION,
     verbose = false)
 

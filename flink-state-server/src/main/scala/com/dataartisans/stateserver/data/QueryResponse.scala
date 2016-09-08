@@ -1,4 +1,5 @@
-package com.twitter.hello
+package com.dataartisans.stateserver.data
+
 //[
 //  {
 //    "target":"apple",

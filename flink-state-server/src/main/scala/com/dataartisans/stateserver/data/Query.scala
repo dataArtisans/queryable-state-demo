@@ -1,4 +1,4 @@
-package com.twitter.hello
+package com.dataartisans.stateserver.data
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

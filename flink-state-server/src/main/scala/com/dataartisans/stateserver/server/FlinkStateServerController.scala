@@ -1,8 +1,10 @@
-package com.twitter.hello
+package com.dataartisans.stateserver.server
 
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+import com.dataartisans.stateserver.data.{Query, QueryResponse}
+import com.dataartisans.stateserver.queryclient.QueryClient
 import com.twitter.finagle.http.Request
 import com.twitter.finatra.http.Controller
 import org.joda.time.DateTime
@@ -10,7 +12,7 @@ import org.joda.time.DateTime
 import scala.collection.JavaConverters._
 import scala.util.matching.Regex
 
-class HelloWorldController @Inject()(queryClient: QueryClient) extends Controller {
+class FlinkStateServerController @Inject()(queryClient: QueryClient) extends Controller {
 
   post("/search") { request: Request =>
     response.ok(

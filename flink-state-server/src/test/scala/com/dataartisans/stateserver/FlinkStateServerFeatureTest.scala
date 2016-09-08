@@ -1,12 +1,13 @@
-package com.twitter.hello
+package com.dataartisans.stateserver
 
+import com.dataartisans.stateserver.server.FlinkStateServer
 import com.twitter.finagle.http.Status._
 import com.twitter.finatra.http.test.EmbeddedHttpServer
 import com.twitter.inject.server.FeatureTest
 
-class HelloWorldFeatureTest extends FeatureTest {
+class FlinkStateServerFeatureTest extends FeatureTest {
 
-  override val server = new EmbeddedHttpServer(new HelloWorldServer)
+  override val server = new EmbeddedHttpServer(new FlinkStateServer)
 
   "Server" should {
     "Say hi" in {

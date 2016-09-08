@@ -1,40 +1,22 @@
-package com.twitter.hello
+package com.dataartisans.stateserver.queryclient
 
 import java.{lang, util}
 
 import com.jgrier.flinkstuff.data.KeyedDataPoint
-import org.apache.flink.api.common.{JobID, ExecutionConfig}
-import org.apache.flink.api.common.typeinfo.{TypeInformation, TypeHint}
+import org.apache.flink.api.common.typeinfo.{TypeHint, TypeInformation}
 import org.apache.flink.api.common.typeutils.TypeSerializer
+import org.apache.flink.api.common.{ExecutionConfig, JobID}
 import org.apache.flink.configuration.GlobalConfiguration
 import org.apache.flink.runtime.query.QueryableStateClient
 import org.apache.flink.runtime.query.netty.message.KvStateRequestSerializer
-import org.apache.flink.runtime.state.{VoidNamespaceSerializer, VoidNamespace}
+import org.apache.flink.runtime.state.{VoidNamespace, VoidNamespaceSerializer}
 
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{Await, duration}
 
-object QueryClient {
-  def main(args: Array[String]): Unit = {
-    val queryClient = QueryClient()
-    while (true) {
-      Thread.sleep(1000)
-      val results = queryClient.executeQuery("apple")
-      val itor = results.iterator
-      while (itor.hasNext) {
-        println(itor.next)
-      }
-    }
-  }
-
-  def apply() = {
-    new QueryClient
-  }
-}
-
 class QueryClient {
   private val client = getQueryableStateClient()
-  private val JobId: String = "fb33030a773aec645df37b0afc28eb58"
+  private val JobId: String = "6a28c071970c7340c74bd852eafca99f"
 
   def executeQuery(key: String): util.List[KeyedDataPoint[lang.Long]] = {
     val jobId = JobID.fromHexString(JobId)
@@ -77,5 +59,23 @@ class QueryClient {
         VoidNamespace.INSTANCE,
         VoidNamespaceSerializer.INSTANCE)
     serializedKey
+  }
+}
+
+object QueryClient {
+  def main(args: Array[String]): Unit = {
+    val queryClient = QueryClient()
+    while (true) {
+      Thread.sleep(1000)
+      val results = queryClient.executeQuery("apple")
+      val itor = results.iterator
+      while (itor.hasNext) {
+        println(itor.next)
+      }
+    }
+  }
+
+  def apply() = {
+    new QueryClient
   }
 }
